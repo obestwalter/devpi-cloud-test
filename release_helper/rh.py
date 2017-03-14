@@ -127,7 +127,7 @@ def read_only_memory(func):
             log.warning("nothing to work with. Call 'dct set' to get started")
             sys.exit(1)
 
-        log.info("%s==%s", self.runner.project, self.runner.version)
+        log.info("%s==%s", self._runner.project, self._runner.version)
         func(self, *args, **kwargs)
     return _with_memory
 
