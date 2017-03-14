@@ -12,6 +12,7 @@ Test and release helper for packages that:
 2. adjust `settings.py` to your needs
 3. If necessary: edit `.travis.yml` and `appveyor.yml`
 
+
     $ </path/to/your/clone>
     $ pip install -e .
     $ dct -- --help
