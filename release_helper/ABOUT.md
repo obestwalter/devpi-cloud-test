@@ -3,8 +3,8 @@
 It's a cli tool that by creating and pushing changes to this repository triggers CI builds and helps releasing projects that ...
 
 * create version numbers from tags (e.g. with [setuptools_scm](https://pypi.python.org/pypi/setuptools_scm))
-* are pushed to devpi
-* are released to pypi by pushing from devpi
+* are pushed to [devpi](http://doc.devpi.net)
+* are released to [pypi](https://pypi.org/) by pushing from devpi
 
 # Used by
 
@@ -13,7 +13,7 @@ It's a cli tool that by creating and pushing changes to this repository triggers
 
 # Usage
 
-Find out more from cli help or [the source luke](release_helper/rh.py).
+Find out more from cli help or [the source luke](rh.py).
 
 1. Fork this repository and enable Travis and Appveyor for your fork.
 2. adjust `settings.py` to your needs
