@@ -1,4 +1,3 @@
-import os
 import sys
 from datetime import datetime
 from string import Template
@@ -7,12 +6,16 @@ import devpy
 import fire
 from plumbum import local, LocalPath
 
-import settings
+from release_helper import settings
 
 log = devpy.autolog()
 
 
 class Runner:
+    HERE = LocalPath(__file__).dirname
+    ROOT = HERE.up()
+    TPL_PATH = HERE / 'tpl'
+
     def __init__(self, project, version):
         self.project = project
         self.version = version
@@ -56,13 +59,15 @@ class Runner:
             self.projectPath, self.version, self.project, self.version)
 
     def render_files(self):
-        for file in os.listdir('tpl'):
-            with open(os.path.join('tpl', file)) as tpl:
-                tpl = Template(tpl.read())
-            with open(file, 'w') as result:
-                result.write(tpl.safe_substitute(
-                    PROJECT=self.project, VERSION=self.version,
-                    DEVPI_INDEX=self.devpiIndex, REPO_NAME=self.repoName))
+        for file in self.TPL_PATH.list():
+            content = file.read()
+            tpl = Template(content)
+            dstPath = self.ROOT / file.basename
+            renderResult = tpl.safe_substitute(
+                PROJECT=self.project, VERSION=self.version,
+                USER=settings.USER, DEVPI_INDEX=self.devpiIndex,
+                REPO_NAME=self.repoName)
+            dstPath.write(renderResult)
 
     def _tag_new_version(self):
         """set git version tag for the new build"""
@@ -162,4 +167,5 @@ class Cli():
 
 
 def main():
-    fire.Fire(Cli())
+    with local.cwd(LocalPath(__file__).dirname):
+        fire.Fire(Cli())

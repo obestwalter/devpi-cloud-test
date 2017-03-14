@@ -2,13 +2,16 @@ from setuptools import setup
 
 setup(
     name='release-helper',
+    author='Oliver Bestwalter',
+    description='A little cli helper for my kind of release flow',
     install_requires=['fire', 'plumbum', 'devpy'],
-    entry_points={'console_scripts': ['dct = dct:main']},
+    packages=['release_helper'],
+    entry_points={'console_scripts': ['rh = release_helper.rh:main']},
     classifiers=[
-        'Operating System :: OS Independent',
-        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        'Development Status :: 3 - Alpha',
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',
+        'License :: OSI Approved :: MIT License',
     ],
 )

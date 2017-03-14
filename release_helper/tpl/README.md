@@ -8,4 +8,6 @@ AppVeyor: [![Build status](https://ci.appveyor.com/api/projects/status/i8uvwxe6g
 
 # ?
 
-see [ABOUT](ABOUT.md) to find out what this is and it works.
+This README is generated and actually a build result. It's complicated ... not really.
+
+See [ABOUT](ABOUT.md) to find out what this is and it works.
