@@ -4,4 +4,4 @@ Travis [![Build Status](https://travis-ci.org/obestwalter/release-helper.svg?bra
 
 # ?
 
-This README is generated and actually a build result. It's complicated ... but not really. See [ABOUT](release_helper/ABOUT.md) to find out what this is and how it works.
+This README is generated and actually a build result. It's complicated ... but not really. See [ABOUT](./release_helper/ABOUT.md) to find out what this is and how it works.

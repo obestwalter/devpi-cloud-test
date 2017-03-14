@@ -99,10 +99,11 @@ class Runner:
         """If anything in this repo changes, new tests are triggered"""
         timestamp = datetime.now().ctime()
         self._write_timestamp(timestamp)
-        cmd.git('add', '.')
-        cmd.git('commit', '-m', '%s==%s (%s)' % (
-            self.project, self.version, timestamp))
-        cmd.git('push', 'origin', 'master')
+        with local.cwd(self.ROOT):
+            cmd.git('add', '.')
+            cmd.git('commit', '-m', '%s==%s (%s)' % (
+                self.project, self.version, timestamp))
+            cmd.git('push', 'origin', 'master')
 
     def _set_last_test_info(self):
         pass
