@@ -96,7 +96,7 @@ class Runner:
         timestamp = datetime.now().ctime()
         self._write_timestamp(timestamp)
         cmd.git('add', '.')
-        cmd.git('commit', '-m', 'trigger %s==%s (%s)' % (
+        cmd.git('commit', '-m', '%s==%s (%s)' % (
             self.project, self.version, timestamp))
         cmd.git('push', 'origin', 'master')
 
