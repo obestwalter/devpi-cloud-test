@@ -23,6 +23,12 @@ class Runner:
         self.projectPath = LocalPath(settings.PROJECTS_ROOT) / self.project
         self.devpiPackageUrl = "%s/%s/%s" % (
             self.project, self.version, self.devpiIndex)
+        log.info("working with:\n%s" % self)
+
+    def __str__(self):
+        return '\n'.join(
+            ["%s: %s" % (a, getattr(self, a)) for a in dir(self) if
+             not a.startswith('_') and not callable(getattr(self, a))])
 
     def prepare_new_version(self):
         self.render_files()
@@ -112,6 +118,7 @@ class Memory:
 def with_memory(func):
     def _with_memory(self, *args, **kwargs):
         if not hasattr(self, 'runner'):
+            log.warning("nothing to work with. Call 'dct set' to get started")
             sys.exit(1)
 
         log.info("%s==%s", self.runner.project, self.runner.version)
@@ -125,11 +132,12 @@ class Cli():
         try:
             self.runner = Runner(*Memory.get())
         except FileNotFoundError:
-            log.warning("nothing to work with. Call 'dct set' to get started")
+            pass
 
     def set(self, project, version):
         Memory.set(project, version)
-        self.runner = Runner(*Memory.get())
+        if [project, version] != Memory.get():
+            self.runner = Runner(*Memory.get())
 
     @with_memory
     def test(self):
