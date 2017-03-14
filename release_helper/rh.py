@@ -5,16 +5,17 @@ from string import Template
 import devpy
 import fire
 from plumbum import local, LocalPath
+from plumbum.commands.processes import ProcessExecutionError
 
 from release_helper import settings
 
-log = devpy.autolog()
+log = devpy.autolog(level='DEBUG')
 
 
 class Runner:
-    HERE = LocalPath(__file__).dirname
-    ROOT = HERE.up()
-    TPL_PATH = HERE / 'tpl'
+    _HERE = LocalPath(__file__).dirname
+    ROOT = _HERE.up()
+    _ = _HERE / 'tpl'
 
     def __init__(self, project, version):
         self.project = project
@@ -22,7 +23,6 @@ class Runner:
         self.user = settings.USER
         self.repoName = settings.REPO_NAME
         self.devpiIndex = settings.DEVPI_INDEX
-        self.withLogin = settings.WITH_LOGIN
         self.projectPath = LocalPath(settings.PROJECTS_ROOT) / self.project
         self.devpiPackageUrl = "%s/%s/%s" % (
             self.devpiIndex, self.project, self.version)
@@ -33,12 +33,12 @@ class Runner:
             ["%s: %s" % (a, getattr(self, a)) for a in dir(self) if
              not a.startswith('_') and not callable(getattr(self, a))])
 
-    def prepare_new_version(self):
+    def prepare(self):
         self.render_files()
         self._tag_new_version()
         self._devpi_upload()
 
-    def trigger_tests(self):
+    def devpi_test(self):
         self._push_changes()
 
     def retract(self, radical):
@@ -59,7 +59,7 @@ class Runner:
             self.projectPath, self.version, self.project, self.version)
 
     def render_files(self):
-        for file in self.TPL_PATH.list():
+        for file in self._.list():
             content = file.read()
             tpl = Template(content)
             dstPath = self.ROOT / file.basename
@@ -78,9 +78,13 @@ class Runner:
         """upload new version to devpi"""
         with local.cwd(self.projectPath):
             cmd.devpi('use', self.devpiIndex)
-            if self.withLogin:
-                cmd.devpi('login', self.user)
-            cmd.devpi('upload')
+            try:
+                cmd.devpi('upload')
+            except ProcessExecutionError as e:
+                if 'devpi login' in e.stdout:
+                    log.warning("logging you in to devpi ...")
+                    cmd.devpi('login', self.user)
+                    cmd.devpi('upload')
             log.info("uploaded package to %s", self.devpiIndex)
 
     @staticmethod
@@ -146,14 +150,14 @@ class Cli():
             self._runner = Runner(*Memory.get())
 
     @read_only_memory
-    def test(self):
+    def prepare(self):
         """Trigger CI tests for configured build"""
-        self._runner.trigger_tests()
+        self._runner.prepare()
 
     @read_only_memory
-    def release(self):
-        """Release the current build (still a NOP)"""
-        self._runner.release()
+    def test(self):
+        """Trigger CI tests for configured build"""
+        self._runner.devpi_test()
 
     @read_only_memory
     def retract(self, radical=False):
@@ -161,9 +165,9 @@ class Cli():
         self._runner.retract(radical)
 
     @read_only_memory
-    def render_only(self):
-        """Update files from templates only"""
-        self._runner.render_files()
+    def release(self):
+        """Release the current build (still a NOP)"""
+        self._runner.release()
 
 
 def main():
