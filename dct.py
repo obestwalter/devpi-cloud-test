@@ -38,11 +38,12 @@ class Runner:
     def trigger_tests(self):
         self._push_changes()
 
-    def retract(self):
+    def retract(self, radical):
         """remove tag and remove build from devpi"""
         with local.cwd(self.projectPath):
             cmd.git('tag', '-d', self.version)
-            cmd.devpi('remove', '-y', '%s==%s', self.project, self.version)
+            if radical:
+                cmd.devpi('remove', '-y', '%s==%s', self.project, self.version)
 
     def release(self):
         """paranoia level: advanced beginner - not automated ... yet"""
@@ -150,9 +151,9 @@ class Cli():
         self.runner.release()
 
     @read_only_memory
-    def retract(self):
-        """Release the current build (still a NOP)"""
-        self.runner.retract()
+    def retract(self, radical=False):
+        """Retract the build (tag and optional devpi build)"""
+        self.runner.retract(radical)
 
     @read_only_memory
     def render_only(self):
