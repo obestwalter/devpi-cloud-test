@@ -15,7 +15,7 @@ log = devpy.autolog(level='DEBUG')
 class Runner:
     _HERE = LocalPath(__file__).dirname
     _ROOT = _HERE.up()
-    _ = _HERE / 'tpl'
+    _TPL_PATH = _HERE / 'tpl'
 
     def __init__(self, project, version):
         self.project = project
@@ -59,7 +59,7 @@ class Runner:
             self.projectPath, self.version, self.project, self.version)
 
     def render_files(self):
-        for file in self._.list():
+        for file in self._TPL_PATH.list():
             content = file.read()
             tpl = Template(content)
             dstPath = self._ROOT / file.basename
