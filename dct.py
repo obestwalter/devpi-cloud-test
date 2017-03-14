@@ -1,15 +1,15 @@
-import logging
 import os
 import sys
 from datetime import datetime
 from string import Template
 
+import devpy
 import fire
 from plumbum import local, LocalPath
 
 import settings
 
-log = logging.getLogger('DCT')
+log = devpy.autolog()
 
 
 class Runner:
@@ -40,6 +40,7 @@ class Runner:
 
     def release(self):
         """paranoia level: advanced beginner - not automated ... yet"""
+        log.warning("not doing anything - just jogging your memory")
         log.info(
             '\nrelease the package to pypi:\n'
             'cd %s\n'
@@ -146,7 +147,6 @@ class Cli:
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
     fire.Fire(Cli)
 
 if __name__ == '__main__':
