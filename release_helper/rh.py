@@ -123,7 +123,7 @@ class Memory:
 
 def read_only_memory(func):
     def _with_memory(self, *args, **kwargs):
-        if not hasattr(self, 'runner'):
+        if not hasattr(self, '_runner'):
             log.warning("nothing to work with. Call 'dct set' to get started")
             sys.exit(1)
 
@@ -136,34 +136,34 @@ class Cli():
     """Little cloud test and release helper thing"""
     def __init__(self):
         try:
-            self.runner = Runner(*Memory.get())
+            self._runner = Runner(*Memory.get())
         except FileNotFoundError:
             pass
 
     def set(self, project, version):
         Memory.set(project, version)
         if [project, version] != Memory.get():
-            self.runner = Runner(*Memory.get())
+            self._runner = Runner(*Memory.get())
 
     @read_only_memory
     def test(self):
         """Trigger CI tests for configured build"""
-        self.runner.trigger_tests()
+        self._runner.trigger_tests()
 
     @read_only_memory
     def release(self):
         """Release the current build (still a NOP)"""
-        self.runner.release()
+        self._runner.release()
 
     @read_only_memory
     def retract(self, radical=False):
         """Retract the build (tag and optional devpi build)"""
-        self.runner.retract(radical)
+        self._runner.retract(radical)
 
     @read_only_memory
     def render_only(self):
         """Update files from templates only"""
-        self.runner.render_files()
+        self._runner.render_files()
 
 
 def main():
