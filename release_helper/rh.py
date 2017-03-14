@@ -14,7 +14,7 @@ log = devpy.autolog(level='DEBUG')
 
 class Runner:
     _HERE = LocalPath(__file__).dirname
-    ROOT = _HERE.up()
+    _ROOT = _HERE.up()
     _ = _HERE / 'tpl'
 
     def __init__(self, project, version):
@@ -62,7 +62,7 @@ class Runner:
         for file in self._.list():
             content = file.read()
             tpl = Template(content)
-            dstPath = self.ROOT / file.basename
+            dstPath = self._ROOT / file.basename
             renderResult = tpl.safe_substitute(
                 PROJECT=self.project, VERSION=self.version,
                 USER=settings.USER, DEVPI_INDEX=self.devpiIndex,
@@ -99,7 +99,7 @@ class Runner:
         """If anything in this repo changes, new tests are triggered"""
         timestamp = datetime.now().ctime()
         self._write_timestamp(timestamp)
-        with local.cwd(self.ROOT):
+        with local.cwd(self._ROOT):
             cmd.git('add', '.')
             cmd.git('commit', '-m', '%s==%s (%s)' % (
                 self.project, self.version, timestamp))
