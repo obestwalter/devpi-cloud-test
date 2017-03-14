@@ -22,7 +22,7 @@ class Runner:
         self.withLogin = settings.WITH_LOGIN
         self.projectPath = LocalPath(settings.PROJECTS_ROOT) / self.project
         self.devpiPackageUrl = "%s/%s/%s" % (
-            self.project, self.version, self.devpiIndex)
+            self.devpiIndex, self.project, self.version)
         log.info("working with:\n%s" % self)
 
     def __str__(self):
