@@ -102,52 +102,58 @@ class Memory:
 
     @classmethod
     def get(cls):
-        if not cls.path.exists():
-            log.error("no current test set")
-            sys.exit(1)
-
-        memory = [e.strip() for e in cls.path.read('utf-8').split()]
-        log.info("working with %s", memory)
-        return memory
+        return [e.strip() for e in cls.path.read('utf-8').split()]
 
     @classmethod
     def set(cls, project, version, which=path):
         which.write(project + "\n" + version, encoding='utf-8')
 
 
-class Cli:
+def with_memory(func):
+    def _with_memory(self, *args, **kwargs):
+        if not hasattr(self, 'runner'):
+            sys.exit(1)
+
+        log.info("%s==%s", self.runner.project, self.runner.version)
+        func(self, *args, **kwargs)
+    return _with_memory
+
+
+class Cli():
     """Little cloud test and release helper thing"""
+    def __init__(self):
+        try:
+            self.runner = Runner(*Memory.get())
+        except FileNotFoundError:
+            log.warning("nothing to work with. Call 'dct set' to get started")
 
     def set(self, project, version):
         Memory.set(project, version)
+        self.runner = Runner(*Memory.get())
 
-    def info(self):
-        """Show which build is configured"""
-        Memory.get()
-
+    @with_memory
     def test(self):
         """Trigger CI tests for configured build"""
-        runner = Runner(*Memory.get())
-        runner.trigger_tests()
+        self.runner.trigger_tests()
 
+    @with_memory
     def release(self):
         """Release the current build (still a NOP)"""
-        runner = Runner(*Memory.get())
-        runner.release()
+        self.runner.release()
 
+    @with_memory
     def retract(self):
         """Release the current build (still a NOP)"""
-        runner = Runner(*Memory.get())
-        runner.retract()
+        self.runner.retract()
 
+    @with_memory
     def render_only(self):
         """Update files from templates only"""
-        runner = Runner(*Memory.get())
-        runner.render_files()
+        self.runner.render_files()
 
 
 def main():
-    fire.Fire(Cli)
+    fire.Fire(Cli())
 
 if __name__ == '__main__':
     sys.exit(main)
