@@ -1,37 +1,40 @@
 import sys
+from configparser import ConfigParser
 from datetime import datetime
 from string import Template
 
 import devpy
 import fire
+from devpi_common.types import cached_property
 from plumbum import local, LocalPath
 from plumbum.commands.processes import ProcessExecutionError
-
-from release_helper import settings
 
 log = devpy.autolog(level='DEBUG')
 
 
 class Runner:
-    _HERE = LocalPath(__file__).dirname
-    _ROOT = _HERE.up()
-    _TPL_PATH = _HERE / 'tpl'
-
-    def __init__(self, project, version):
-        self.project = project
+    def __init__(self, version):
         self.version = version
-        self.user = settings.USER
-        self.repoName = settings.REPO_NAME
-        self.devpiIndex = settings.DEVPI_INDEX
-        self.projectPath = LocalPath(settings.PROJECTS_ROOT) / self.project
-        self.devpiPackageUrl = "%s/%s/%s" % (
-            self.devpiIndex, self.project, self.version)
-        log.info("working with:\n%s" % self)
+        self._init()
 
     def __str__(self):
         return '\n'.join(
             ["%s: %s" % (a, getattr(self, a)) for a in dir(self) if
              not a.startswith('_') and not callable(getattr(self, a))])
+
+    def _init(self):
+        self.dcttPath = local.cwd
+        self.project = self.cnf['project']
+        self.user = self.cnf['user']
+        self.devpiIndex = self.cnf['devpi_index']
+        self.projectPath = LocalPath(self.cnf['root_path']) / self.project
+        log.info("working with:\n%s" % self)
+
+    @cached_property
+    def cnf(self):
+        config = ConfigParser()
+        config.read('dctt.ini')
+        return config['dctt']
 
     def prepare(self):
         self.render_files()
@@ -59,15 +62,13 @@ class Runner:
             self.projectPath, self.version, self.project, self.version)
 
     def render_files(self):
-        for file in self._TPL_PATH.list():
-            content = file.read()
-            tpl = Template(content)
-            dstPath = self._ROOT / file.basename
+        for file in (self.dcttPath / 'tpl').list():
+            tpl = Template(file.read(encoding='utf-8'))
             renderResult = tpl.safe_substitute(
                 PROJECT=self.project, VERSION=self.version,
-                USER=settings.USER, DEVPI_INDEX=self.devpiIndex,
-                REPO_NAME=self.repoName)
-            dstPath.write(renderResult)
+                USER=self.user, DEVPI_INDEX=self.devpiIndex,
+                TIMESTAMP=datetime.now().ctime())
+            LocalPath(file.name).write(renderResult, encoding='utf-8')
 
     def _tag_new_version(self):
         """set git version tag for the new build"""
@@ -87,26 +88,12 @@ class Runner:
                     cmd.devpi('upload')
             log.info("uploaded package to %s", self.devpiIndex)
 
-    @staticmethod
-    def _write_timestamp(timestamp):
-        """Always changing timestamp ensures a new build every time.
-
-        Needed if you want to test a new package with the same version
-        """
-        LocalPath('TIMESTAMP').write(timestamp)
-
     def _push_changes(self):
         """If anything in this repo changes, new tests are triggered"""
-        timestamp = datetime.now().ctime()
-        self._write_timestamp(timestamp)
-        with local.cwd(self._ROOT):
+        with local.cwd(self.dcttPath):
             cmd.git('add', '.')
-            cmd.git('commit', '-m', '%s==%s (%s)' % (
-                self.project, self.version, timestamp))
+            cmd.git('commit', '-m', '%s==%s' % (self.project, self.version))
             cmd.git('push', 'origin', 'master')
-
-    def _set_last_test_info(self):
-        pass
 
 
 class cmd:
@@ -115,24 +102,24 @@ class cmd:
 
 
 class Memory:
-    path = LocalPath('memory')
+    path = LocalPath('version')
 
     @classmethod
     def get(cls):
-        return [e.strip() for e in cls.path.read('utf-8').split()]
+        return cls.path.read(encoding='utf-8').strip()
 
     @classmethod
-    def set(cls, project, version, which=path):
-        which.write(project + "\n" + version, encoding='utf-8')
+    def set(cls, version):
+        cls.path.write(version, encoding='utf-8')
 
 
 def read_only_memory(func):
     def _with_memory(self, *args, **kwargs):
         if not hasattr(self, '_runner'):
-            log.warning("nothing to work with. Call 'dct set' to get started")
+            log.warning("no version. Call 'rh set <version>' first")
             sys.exit(1)
 
-        log.info("%s==%s", self._runner.project, self._runner.version)
+        log.info("%s", self._runner.version)
         func(self, *args, **kwargs)
     return _with_memory
 
@@ -141,14 +128,14 @@ class Cli():
     """Little cloud test and release helper thing"""
     def __init__(self):
         try:
-            self._runner = Runner(*Memory.get())
+            self._runner = Runner(Memory.get())
         except FileNotFoundError:
             pass
 
-    def set(self, project, version):
-        Memory.set(project, version)
-        if [project, version] != Memory.get():
-            self._runner = Runner(*Memory.get())
+    def set(self, version):
+        Memory.set(version)
+        if version != Memory.get():
+            self._runner = Runner(Memory.get())
 
     @read_only_memory
     def prepare(self):
@@ -172,5 +159,4 @@ class Cli():
 
 
 def main():
-    with local.cwd(LocalPath(__file__).dirname):
-        fire.Fire(Cli())
+    fire.Fire(Cli())
