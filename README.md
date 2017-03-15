@@ -4,7 +4,7 @@ If you are not a Python developer maintaining an open source project you can pro
 
 If you are not maintaining a project that uses [setuptools_scm](https://pypi.python.org/pypi/setuptools_scm) or some other mechanism that determines the version number of a build from source control (specifically git) you can probably stop reading now.
 
-If you are not using [devpi](http://doc.devpi.net) test test, share and store packages and test results you can probably stop reading now.
+If you are not using [devpi](http://doc.devpi.net) to test, share and store packages and test results you can probably stop reading now.
 
 If you do not release your projects to [devpi](http://doc.devpi.net) or [pypi](https://pypi.org/) by pushing the package from your devpi index you can probably stop reading now.
 
