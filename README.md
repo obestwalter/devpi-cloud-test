@@ -18,22 +18,26 @@ If you did not stop reading although all this does not really fit, check out [ze
 
 # How it works
 
-* pip install release-helper
-* create a repo for the project you want to test and release that way
-* store the configuration in settings.py of that repo (TODO create a template for creating one of those repos)
-* the release helper will operate on your project (setting and removing tags, creating builds) and on the trigger/result repo (rendering the files for the changing builds and updating the history)
+Install this tool (not yet on pypi):
 
+    $ pip install git+git://github.com/obestwalter/release-helper.git@master 
+
+Fork an existing dctt-repo, e.g. https://github.com/obestwalter/dctt-tox and clone it.
+
+Activate Travis and Appveyor for your fork.
+
+Adjust settings in `dctt.ini`
+
+    $ cd </path/to/your/dctt/repo>
+    $ rh set <version>
+    $ rh prepare
+    $ rh test
+    $ rh release  # (still a NOP)
 
 # Used by
 
 * [tox-dev/tox](https://github.com/tox-dev/tox)
 * that's it - nothing else - it's just an idea I am playing with
-
-```bash
-$ </path/to/your/clone>
-$ pip install -e .
-$ rh -- --help
-```
 
 # Acknowledgements
 

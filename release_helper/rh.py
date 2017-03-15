@@ -25,7 +25,7 @@ class Runner:
     def _init(self):
         self.dcttPath = local.cwd
         self.project = self.cnf['project']
-        self.user = self.cnf['user']
+        self.devpiUser = self.cnf['depi_user']
         self.devpiIndex = self.cnf['devpi_index']
         self.projectPath = LocalPath(self.cnf['root_path']) / self.project
         log.info("working with:\n%s" % self)
@@ -66,7 +66,7 @@ class Runner:
             tpl = Template(file.read(encoding='utf-8'))
             renderResult = tpl.safe_substitute(
                 PROJECT=self.project, VERSION=self.version,
-                USER=self.user, DEVPI_INDEX=self.devpiIndex,
+                USER=self.devpiUser, DEVPI_INDEX=self.devpiIndex,
                 TIMESTAMP=datetime.now().ctime())
             LocalPath(file.name).write(renderResult, encoding='utf-8')
 
@@ -84,7 +84,7 @@ class Runner:
             except ProcessExecutionError as e:
                 if 'devpi login' in e.stdout:
                     log.warning("logging you in to devpi ...")
-                    cmd.devpi('login', self.user)
+                    cmd.devpi('login', self.devpiUser)
                     cmd.devpi('upload')
             log.info("uploaded package to %s", self.devpiIndex)
 
