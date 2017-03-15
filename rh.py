@@ -25,7 +25,7 @@ class Runner:
     def _init(self):
         self.dcttPath = local.cwd
         self.project = self.cnf['project']
-        self.devpiUser = self.cnf['depi_user']
+        self.devpiUser = self.cnf['devpi_user']
         self.devpiIndex = self.cnf['devpi_index']
         self.projectPath = LocalPath(self.cnf['root_path']) / self.project
         log.info("working with:\n%s" % self)

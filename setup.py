@@ -5,8 +5,7 @@ setup(
     author='Oliver Bestwalter',
     description='A little cli helper for my kind of release flow',
     install_requires=['devpi-client', 'fire', 'plumbum', 'devpy'],
-    packages=['release_helper'],
-    entry_points={'console_scripts': ['rh = release_helper.rh:main']},
+    entry_points={'console_scripts': ['rh = rh:main']},
     classifiers=[
         'Intended Audience :: Developers',
         'Development Status :: 3 - Alpha',
