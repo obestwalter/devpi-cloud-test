@@ -26,6 +26,8 @@ Fork an existing dctt-repo, e.g. https://github.com/obestwalter/dctt-tox and clo
 
 Activate Travis and Appveyor for your fork.
 
+copy the badge info for Travis and Appveyor into the README.
+
 Adjust settings in `dctt.ini`
 
     $ cd </path/to/your/dctt/repo>
