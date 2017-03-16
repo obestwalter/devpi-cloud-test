@@ -38,11 +38,6 @@ class Dct:
         self._devpiUser = dct['devpi_user']
         self._devpiIndex = dct['devpi_index']
 
-    def __str__(self):
-        return ' | '.join(
-            ["%s: %s" % (a, getattr(self, a)) for a in dir(self) if
-             not a.startswith('_') and not callable(getattr(self, a))])
-
     def trigger(self, version):
         """Trigger tests by rendering file and pushing changes"""
         self.render(version)
