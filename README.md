@@ -10,23 +10,20 @@ dctt configures a special trigger repository to run tests on Travis CI and Appve
 
 # How it works
 
-Install this tool (not yet on pypi):
+Install this small cli tool (not yet on pypi):
 
-    $ pip install git+git://github.com/obestwalter/release-helper.git@master 
+    $ pip install git+git://github.com/obestwalter/devpi-cloud-test.git@master
 
-Fork an existing dctt-repo, e.g. https://github.com/obestwalter/dctt-tox and clone it.
+Fork an existing devpi-cloud-test-repo, e.g. https://github.com/obestwalter/devpi-cloud-test-tox and clone it.
 
-Activate Travis and Appveyor for your fork.
+Activate the CI services that are used in the test repo (e.g. Travis and Appveyor).
 
-Copy the badge info for Travis and Appveyor into the README.
+Copy the appropriate CI badge codes into `tpl/README.md`.
 
 Adjust settings in `dctt.ini`
 
     $ cd </path/to/your/dctt/repo>
-    $ rh set <version>
-    $ rh prepare
-    $ rh test
-    $ rh release  # (still a NOP)
+    $ dctt trigger <version>  # version of package on devpi
 
 # Used by
 
@@ -40,4 +37,3 @@ This is just a thin convenience wrapper around [@nicoddemus](https://github.com/
 > Talent hits a target no one else can hit; Genius hits a target no one else can see.
 >
 > -- Arthur Schopenhauer
-
