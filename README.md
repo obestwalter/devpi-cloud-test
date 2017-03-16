@@ -2,7 +2,7 @@
 
 If you are not using [devpi](http://doc.devpi.net) to test, share and store packages and test results you can probably stop reading now.
 
-*Devpi cloud test* provides a `dct` cli tool that manipulates a special trigger repository to run tests of packages from your devpi index on CI services like Travis CI and Appveyor. It triggers tests for the devpi package - not the source code in the trigger repository.
+**devpi-cloud-test** provides a `dct` cli tool that manipulates a special trigger repository to run tests of packages from your devpi index on CI services like Travis CI and Appveyor. It triggers tests for the devpi package - not the source code in the trigger repository.
 
 This is just a thin convenience wrapper around a [nifty idea](https://github.com/nicoddemus/devpi-cloud-tester) by [@nicoddemus](https://github.com/nicoddemus).
 
