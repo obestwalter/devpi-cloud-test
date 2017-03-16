@@ -1,11 +1,11 @@
 from setuptools import setup
 
 setup(
-    name='release-helper',
+    name='Devpi cloud test trigger',
     author='Oliver Bestwalter',
-    description='A little cli helper for my kind of release flow',
-    install_requires=['devpi-client', 'fire', 'plumbum', 'devpy'],
-    entry_points={'console_scripts': ['rh = rh:main']},
+    description='Trigger tests for devpi packages on CI services',
+    install_requires=['fire', 'plumbum', 'devpy'],
+    entry_points={'console_scripts': ['dctt = dctt:main']},
     classifiers=[
         'Intended Audience :: Developers',
         'Development Status :: 3 - Alpha',
