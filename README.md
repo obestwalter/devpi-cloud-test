@@ -25,6 +25,51 @@ Adjust settings in `dct.ini`
     $ cd </path/to/your/dct/repo>
     $ dct trigger <version>  # version of package on devpi
 
+sample output:
+
+    dct trigger 2.6.1
+    
+    INFO:dct:## rendered tpl/README.md ##
+    # Results for [tox==2.6.1](https://devpi.net/obestwalter/dev/tox/2.6.1)
+    
+    [![Build Status](https://travis-ci.org/obestwalter/devpi-cloud-test-tox.svg?branch=master)](https://travis-ci.org/obestwalter/devpi-cloud-test-tox)
+    
+    [![Build status](https://ci.appveyor.com/api/projects/status/98yyno2u5fpnds4l/branch/master?svg=true)](https://ci.appveyor.com/project/obestwalter/devpi-cloud-test-tox/branch/master)
+    
+    Test triggered at: Thu Mar 16 20:50:14 2017
+    
+    ## -> README.md ##
+    
+    INFO:dct:## rendered tpl/appveyor.yml ##
+    install:
+      - echo Installed Pythons
+      - dir c:\Python*
+      - choco install python.pypy > pypy-inst.log 2>&1 || (type pypy-inst.log & exit /b 1)
+      - set PATH=C:\tools\pypy\pypy;%PATH% # so tox can find pypy
+      - echo PyPy installed
+      - pypy --version
+      - C:\Python36\python -m pip install devpi
+    build: false  # Not a C# project, build stuff at the test step instead.
+    test_script:
+      - C:\Python36\python -m devpi use https://devpi.net/obestwalter/dev
+      - C:\Python36\python -m devpi test tox==2.6.1
+    
+    ## -> appveyor.yml ##
+    
+    INFO:dct:## rendered tpl/.travis.yml ##
+    sudo: false
+    language: python
+    python:
+      - 3.5
+    install: "pip install -U devpi"
+    script:
+      - devpi use https://devpi.net/obestwalter/dev
+      - devpi test tox==2.6.1
+    
+    ## -> .travis.yml ##
+    
+    INFO:dct:triggered test by pushing /home/oliver/Dropbox/projects/tox/devpi-cloud-test-tox
+
 # Used by
 
 * [tox-dev/tox](https://github.com/tox-dev/tox)
