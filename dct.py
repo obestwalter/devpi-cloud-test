@@ -12,11 +12,11 @@ log = devpy.autolog(level='DEBUG', log_filename=False)
 class Dct:
     def __init__(self):
         config = ConfigParser()
-        config.read('dctt.ini')
-        dctt = config['dctt']
-        self._package = dctt['package']
-        self._devpiUser = dctt['devpi_user']
-        self._devpiIndex = dctt['devpi_index']
+        config.read('dct.ini')
+        dct = config['dct']
+        self._package = dct['package']
+        self._devpiUser = dct['devpi_user']
+        self._devpiIndex = dct['devpi_index']
 
     def __str__(self):
         return ' | '.join(
