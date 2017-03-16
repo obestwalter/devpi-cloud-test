@@ -9,7 +9,7 @@ from plumbum import local, LocalPath
 log = devpy.autolog(level='DEBUG', log_filename=False)
 
 
-class Dctt:
+class Dct:
     def __init__(self):
         config = ConfigParser()
         config.read('dctt.ini')
@@ -47,4 +47,4 @@ class Dctt:
 
 
 def main():
-    fire.Fire(Dctt())
+    fire.Fire(Dct())
