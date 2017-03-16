@@ -14,7 +14,7 @@ Install this small cli tool (not yet on pypi):
 
     $ pip install git+git://github.com/obestwalter/devpi-cloud-test.git@master
 
-Fork an existing devpi-cloud-test-repo, e.g. https://github.com/obestwalter/devpi-cloud-test-tox and clone it.
+Fork an existing [devpi-cloud-test-repo](https://github.com/obestwalter/devpi-cloud-test-tox) and clone it.
 
 Activate the CI services that are used in the test repo (e.g. Travis and Appveyor).
 
@@ -72,5 +72,5 @@ sample output:
 
 # Used by
 
-* [tox-dev/tox](https://github.com/tox-dev/tox)
+* [tox-dev/tox](https://github.com/obestwalter/devpi-cloud-test-tox)
 * that's it - nothing else - it's just an idea I am playing with
