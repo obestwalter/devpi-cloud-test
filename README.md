@@ -18,7 +18,7 @@ To create a new cloud test repo you can get started by creating  the necessary f
 
     $ dct create <package name>
 
-e.g. if you are in `~/home/work` and call `dct create tuxy` a directory `devpi-cloud-test-tuxy` gets created with `dct.ini` prepopulated with the package name. You could also pass devpi user and index right as part of the call or add them later to `dct.ini`.
+e.g. if you are in `~/home/work` and call `dct create tuxy` a directory `devpi-cloud-test-tuxy` is created with the necessary templates and `dct.ini` prepopulated with the package name. You could also pass devpi user and index right as part of the call or add them later to `dct.ini`.
 
 Create a new repo on Github or wherever you push to and add it as origin to the new repository.
 
