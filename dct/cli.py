@@ -7,6 +7,8 @@ import fire
 from plumbum import local, LocalPath
 
 log = logging.getLogger(__name__)
+git = local['git']
+config = None
 
 
 class Config:
@@ -16,9 +18,23 @@ class Config:
         config = ConfigParser()
         config.read(self.rel_ini_path)
         dct = config['dct']
+        if not all(dct.values()):
+            log.error('please complete the settings in %s', self.rel_ini_path)
+            exit(1)
+
         self.package = dct['package']
         self.devpi_user = dct['devpi_user']
         self.devpi_index = dct['devpi_index']
+
+    @classmethod
+    def with_config(cls, func):
+        def _with_config(*args, **kwargs):
+            if not cls.rel_ini_path.exists():
+                log.error("no %s in '%s'" % (cls.rel_ini_path, local.cwd))
+                exit(1)
+
+            return func(*args, **kwargs)
+        return _with_config
 
 
 # TODO Use `from plumbum.cli import Application` for cli
@@ -34,8 +50,8 @@ class Dct:
 
     def trigger(self, version):
         """Trigger tests by rendering file and pushing changes"""
-        self._render(version)
-        self._push(version)
+        self._render_files(version)
+        self._git_push(version)
 
     def create(self, package, devpi_user='', devpi_index=''):
         parent = local.cwd / ('devpi-cloud-test-' + package)
@@ -51,6 +67,7 @@ class Dct:
                 self.__render(Config.rel_ini_path,
                               PACKAGE=package, DEVPI_USER=devpi_user,
                               DEVPI_INDEX=devpi_index)
+            self._init_repository(parent)
         except Exception:
             log.exception("creation failed")
             parent.delete()
@@ -59,9 +76,9 @@ class Dct:
         if not all((devpi_user, devpi_index)):
             log.warning("not all options set, please add later in dct.ini")
 
-    def _render(self, version):
+    @Config.with_config
+    def _render_files(self, version):
         """only render the files for the trigger."""
-        config = Config()
         for src in LocalPath('tpl').list():
             self.__render(
                 src, PACKAGE=config.package, VERSION=version,
@@ -76,15 +93,26 @@ class Dct:
         log.info("## rendered %s ##\n%s\n## -> %s ##\n", path, result, dst)
         dst.write(result, encoding='utf-8')
 
-    def _push(self, version):
+    @Config.with_config
+    def _git_push(self, version):
         """only push the changes to origin"""
-        git = local['git']
-        git('add', '.')
-        git('commit', '-m', '%s==%s' % (Config().package, version))
+        self._git_commit('%s==%s' % (config.package, version))
         git('push', 'origin', 'master')
         log.info("triggered test by pushing %s", local.cwd)
 
+    def _init_repository(self, parent):
+        with local.cwd(parent):
+            git('init')
+            self._git_commit('init')
+            log.info("initialized. You can add your remote and push.")
+
+    def _git_commit(self, msg):
+        git('add', '.')
+        git('commit', '-m', msg)
+
 
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
+    global config
+    config = Config()
     fire.Fire(Dct())
