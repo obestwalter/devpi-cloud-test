@@ -18,15 +18,13 @@ To create a new cloud test repo you can get started by creating  the necessary f
 
     $ dct create <package name>
 
-e.g. if you are in `~/home/work` and call `dct create tuxy` a directory `devpi-cloud-test-tuxy` gets created with `dct.ini` prepopulated with the package name - you could also pass devpi user and index right away or add it later.
+e.g. if you are in `~/home/work` and call `dct create tuxy` a directory `devpi-cloud-test-tuxy` gets created with `dct.ini` prepopulated with the package name. You could also pass devpi user and index right as part of the call or add them later to `dct.ini`.
 
 Create a new repo on Github or wherever you push to and add it as origin to the new repository.
 
 Activate the CI services that are used in the test repo (e.g. Travis and Appveyor).
 
 Copy the appropriate CI badge codes into `tpl/README.md`.
-
-If you did not pass all values on creation add the missing settings in `dct.ini`.
 
     $ cd </path/to/your/dct/repo>
     $ dct trigger <version>  # version of package on devpi
