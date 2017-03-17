@@ -27,14 +27,14 @@ class Config:
         self.devpi_index = dct['devpi_index']
 
     @classmethod
-    def with_config(cls, func):
-        def _with_config(*args, **kwargs):
+    def necessary(cls, func):
+        def _necessary(*args, **kwargs):
             if not cls.rel_ini_path.exists():
                 log.error("no %s in '%s'" % (cls.rel_ini_path, local.cwd))
                 exit(1)
 
             return func(*args, **kwargs)
-        return _with_config
+        return _necessary
 
 
 # TODO Use `from plumbum.cli import Application` for cli
@@ -73,7 +73,7 @@ class Dct:
             parent.delete()
             exit(1)
 
-    @Config.with_config
+    @Config.necessary
     def _render_files(self, version):
         """only render the files for the trigger."""
         for src in LocalPath('tpl').list():
@@ -90,7 +90,7 @@ class Dct:
         log.info("## rendered %s ##\n%s\n## -> %s ##\n", path, result, dst)
         dst.write(result, encoding='utf-8')
 
-    @Config.with_config
+    @Config.necessary
     def _git_push(self, version):
         """only push the changes to origin"""
         self._git_commit('%s==%s' % (config.package, version))
