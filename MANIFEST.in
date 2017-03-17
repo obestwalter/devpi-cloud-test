@@ -1,0 +1,2 @@
+graft blueprint
+global-exclude *.py[co]

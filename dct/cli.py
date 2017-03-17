@@ -43,8 +43,13 @@ class Dct:
         self.render(version)
         self.push(version)
 
+    def create(self, package):
+        for src in LocalPath('tpl').list():
+            tpl = Template(src.read(encoding='utf-8'))
+
+
     def render(self, version):
-        """only render the files for the trigger"""
+        """only render the files for the trigger."""
         for src in LocalPath('tpl').list():
             tpl = Template(src.read(encoding='utf-8'))
             result = tpl.safe_substitute(
