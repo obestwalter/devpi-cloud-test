@@ -14,13 +14,19 @@ Install this small cli tool (not yet on pypi):
 
     $ pip install git+git://github.com/obestwalter/devpi-cloud-test.git@master
 
-Fork an existing [devpi-cloud-test-repo](https://github.com/obestwalter/devpi-cloud-test-tox) and clone it.
+To create a new cloud test repo you can get started by creating  the necessary files in a directory `devpi-cloud-test-<package name>` by calling
+
+    $ dct create <package name>
+
+e.g. if you are in `~/home/work` and call `dct create tuxy` a directory `devpi-cloud-test-tuxy` gets created with `dct.ini` prepopulated with the package name - you could also pass devpi user and index right away or add it later.
+
+Create a new repo on Github or wherever you push to and add it as origin to the new repository.
 
 Activate the CI services that are used in the test repo (e.g. Travis and Appveyor).
 
 Copy the appropriate CI badge codes into `tpl/README.md`.
 
-Adjust settings in `dct.ini`
+If you did not pass all values on creation add the missing settings in `dct.ini`.
 
     $ cd </path/to/your/dct/repo>
     $ dct trigger <version>  # version of package on devpi
