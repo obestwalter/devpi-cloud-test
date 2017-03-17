@@ -45,7 +45,7 @@ class Dct:
 
         log.info("create new cloud test in %s", parent)
         try:
-            blueprint_path = LocalPath(__file__).dirname.up() / 'blueprint'
+            blueprint_path = LocalPath(__file__).dirname / 'blueprint'
             blueprint_path.copy(parent)
             with local.cwd(parent):
                 self.__render(Config.rel_ini_path,
