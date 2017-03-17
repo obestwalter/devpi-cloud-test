@@ -73,9 +73,6 @@ class Dct:
             parent.delete()
             exit(1)
 
-        if not all((devpi_user, devpi_index)):
-            log.warning("not all options set, please add later in dct.ini")
-
     @Config.with_config
     def _render_files(self, version):
         """only render the files for the trigger."""
