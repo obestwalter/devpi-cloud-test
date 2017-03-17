@@ -9,7 +9,7 @@ setup(
     setup_requires=['setuptools_scm'],
     packages=find_packages(),
     include_package_data=True,
-    install_requires=['fire', 'plumbum', 'devpi'],
+    install_requires=['fire', 'plumbum'],
     entry_points={'console_scripts': ['dct = dct.cli:main']},
     license='MIT',
     classifiers=[
