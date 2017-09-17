@@ -76,5 +76,5 @@ sample output:
 
 # Used by
 
-* [tox-dev/tox](https://github.com/obestwalter/devpi-cloud-test-tox)
-* that's it - nothing else - it's just an idea I am playing with
+* [tox](https://github.com/obestwalter/devpi-cloud-test-tox)
+* [pytest](https://github.com/nicoddemus/devpi-cloud-test-pytest)
